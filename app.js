@@ -33,7 +33,7 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/public/index.html');
 });
 
-app.get('/process', async (req, res) => {
+app.get('/public/process.html', async (req, res) => {
   const { searchBy, search } = req.query;
   let query = {};
 
