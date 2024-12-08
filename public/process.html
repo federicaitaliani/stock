@@ -1,25 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Search Results</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Search Results</title>
 </head>
 <body>
-    <h1>Search Results</h1>
-    {{#if companies.length}}
-        <ul>
-            {{#each companies}}
-            <li>
-                <strong>Name:</strong> {{this.name}} <br>
-                <strong>Ticker:</strong> {{this.ticker}} <br>
-                <strong>Price:</strong> ${{this.price}}
-            </li>
-            {{/each}}
-        </ul>
-    {{else}}
-        <p>No matching companies found.</p>
-    {{/if}}
-    <a href="/">Back to Home</a>
+  <h1>Search Results</h1>
+  <div id="results"></div>
+  <a href="/">Back to Home</a>
+
+  <script>
+    fetch(window.location.href)
+      .then(response => response.json())
+      .then(data => {
+        const resultsDiv = document.getElementById('results');
+        if (data.companies.length > 0) {
+          const list = document.createElement('ul');
+          data.companies.forEach(company => {
+            const listItem = document.createElement('li');
+            listItem.innerHTML = `
+              <strong>Name:</strong> ${company.name}<br>
+              <strong>Ticker:</strong> ${company.ticker}<br>
+              <strong>Price:</strong> $${company.price}
+            `;
+            list.appendChild(listItem);
+          });
+          resultsDiv.appendChild(list);
+        } else {
+          resultsDiv.innerHTML = '<p>No matching companies found.</p>';
+        }
+      })
+      .catch(error => {
+        console.error("Error fetching results:", error);
+        document.getElementById('results').innerHTML = '<p>An error occurred while fetching results.</p>';
+      });
+  </script>
 </body>
 </html>
