@@ -12,7 +12,7 @@ app.use(express.static('public'));
 
 // MongoDB Connection
 mongoose
-  .connect('mongodb+srv://federicaitaliani:federicaitaliani@cluster.mongodb.net/Stock?retryWrites=true&w=majority', {
+  .connect('mongodb+srv://federicaitaliani:federicaitaliani@cluster0.u0qf8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
