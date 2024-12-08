@@ -26,7 +26,7 @@ const companySchema = new mongoose.Schema({
   price: Number,
 });
 
-const Company = mongoose.model('PublicCompanies', companySchemam 'PublicCompanies');
+const Company = mongoose.model('PublicCompanies', companySchema, 'PublicCompanies');
 
 // Routes
 app.get('/', (req, res) => {
