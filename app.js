@@ -38,21 +38,21 @@ app.get('/', (req, res) => {
 app.get('/process', async (req, res) => {
   const { searchBy, search } = req.query;
 
-  // Build query based on search type
+  console.log("SearchBy:", searchBy);
+  console.log("Search:", search);
+
   let query = {};
   if (searchBy === 'name') {
     query = { name: { $regex: search, $options: 'i' } }; // Case-insensitive search for name
   } else if (searchBy === 'ticker') {
     query = { ticker: { $regex: search, $options: 'i' } }; // Case-insensitive search for ticker
-  } else {
-    return res.status(400).send("Invalid search type.");
   }
+
+  console.log("Constructed Query:", query);
 
   try {
     const companies = await Company.find(query);
-    console.log("Query Results:", companies); // Log results to the console
-
-    // Display results on the webpage
+    console.log("Query Results:", companies); // Log query results
     let output = "<h1>Search Results:</h1>";
     if (companies.length > 0) {
       companies.forEach(company => {
