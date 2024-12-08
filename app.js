@@ -4,8 +4,6 @@ const bodyParser = require('body-parser');
 require('dotenv').config();
 
 const app = express();
-
-// Use the PORT assigned by Heroku or default to 3000 for local testing
 const port = process.env.PORT || 3000;
 
 // Middleware
@@ -14,20 +12,47 @@ app.use(express.static('public'));
 
 // MongoDB connection
 mongoose
-  .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .connect('mongodb+srv://federicaitaliani:federicaitaliani@cluster0.u0qf8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => console.log("Connected to MongoDB"))
   .catch(err => console.error("MongoDB connection error:", err));
+
+// Define Schema and Model
+const companySchema = new mongoose.Schema({
+  name: String,
+  ticker: String,
+  price: Number,
+});
+
+const Company = mongoose.model('Company', companySchema);
 
 // Routes
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/public/index.html');
 });
 
-app.get('/process', (req, res) => {
-  res.sendFile(__dirname + '/public/process.html');
+app.get('/process', async (req, res) => {
+  const { searchBy, search } = req.query;
+  let query = {};
+
+  if (searchBy === 'name') {
+    query = { name: { $regex: search, $options: 'i' } };
+  } else if (searchBy === 'ticker') {
+    query = { ticker: { $regex: search, $options: 'i' } };
+  }
+
+  try {
+    const companies = await Company.find(query);
+    res.json({ companies });
+  } catch (error) {
+    console.error("Error fetching companies:", error);
+    res.status(500).json({ error: "An error occurred." });
+  }
 });
 
-// Start the server
+// Start server
 app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+  console.log(`Server running on port ${port}`);
 });
