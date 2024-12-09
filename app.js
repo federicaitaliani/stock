@@ -1,14 +1,12 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
-require('dotenv').config();
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = 3000;
 
 // Middleware
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static('public'));
+app.use(express.urlencoded({ extended: true })); // Replaces body-parser
+app.use(express.static('public')); // Ensure "public/index.html" exists
 
 // MongoDB Connection
 mongoose
@@ -31,12 +29,18 @@ const Company = mongoose.model('PublicCompanies', companySchema, 'PublicCompanie
 
 // View 1: Home (serves the form)
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/public/index.html');
+  res.sendFile(__dirname + '/public/index.html'); // Ensure "public/index.html" exists
 });
 
 // View 2: Process (handles form submission and database query)
 app.get('/process', async (req, res) => {
   const { searchBy, search } = req.query;
+
+  if (!searchBy || !search) {
+    res.writeHead(400, { 'Content-Type': 'text/html' });
+    res.write("Error: Missing search parameters.");
+    return res.end();
+  }
 
   console.log("SearchBy:", searchBy);
   console.log("Search:", search);
@@ -53,19 +57,23 @@ app.get('/process', async (req, res) => {
   try {
     const companies = await Company.find(query);
     console.log("Query Results:", companies); // Log query results
-    let output = "<h1>Search Results:</h1>";
+
+    res.writeHead(200, { 'Content-Type': 'text/html' });
+    res.write("<h1>Search Results:</h1>");
     if (companies.length > 0) {
       companies.forEach(company => {
-        output += `<p>Name: ${company.name}, Ticker: ${company.ticker}, Price: $${company.price}</p>`;
+        res.write(`<p>Name: ${company.name}, Ticker: ${company.ticker}, Price: $${company.price}</p>`);
       });
     } else {
-      output += "<p>No matching companies found.</p>";
+      res.write("<p>No matching companies found.</p>");
     }
-    output += '<a href="/">Back to Home</a>';
-    res.send(output);
+    res.write('<a href="/">Back to Home</a>');
+    res.end();
   } catch (error) {
     console.error("Error fetching companies:", error);
-    res.status(500).send("An error occurred.");
+    res.writeHead(500, { 'Content-Type': 'text/html' });
+    res.write("Internal Server Error");
+    res.end();
   }
 });
 
