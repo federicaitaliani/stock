@@ -10,7 +10,7 @@ app.use(express.static('public')); // Ensure "public/index.html" exists
 
 // MongoDB Connection
 mongoose
-  .connect('mongodb+srv://federicaitaliani:federicaitaliani@cluster0.u0qf8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
+  .connect('mongodb+srv://federicaitaliani:federicaitaliani@cluster0.u0qf8.mongodb.net/Stock', {
     useNewUrlParser: true, // Only this is needed
   })
   .then(() => console.log("Connected to MongoDB"))
