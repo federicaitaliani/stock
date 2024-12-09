@@ -4,19 +4,19 @@ const mongoose = require('mongoose');
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Middleware
-app.use(express.urlencoded({ extended: true })); // Replaces body-parser
-app.use(express.static('public')); // Ensure "public/index.html" exists
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static('public')); 
+// Ensure "public/index.html" exists
 
 // MongoDB Connection
 mongoose
   .connect('mongodb+srv://federicaitaliani:federicaitaliani@cluster0.u0qf8.mongodb.net/Stock', {
-    useNewUrlParser: true, // Only this is needed
+    useNewUrlParser: true,
   })
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
-// Define Schema and Model
+// Define Schema
 const companySchema = new mongoose.Schema({
   name: String,
   ticker: String,
@@ -24,14 +24,13 @@ const companySchema = new mongoose.Schema({
 });
 const Company = mongoose.model('PublicCompanies', companySchema, 'PublicCompanies');
 
-// Routes
 
-// View 1: Home (serves the form)
+// Home (form)
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/public/index.html'); // Ensure "public/index.html" exists
 });
 
-// View 2: Process (handles form submission and database query)
+// Process (handles form submission and database query)
 app.get('/process', async (req, res) => {
   const { searchBy, search } = req.query;
 
@@ -55,7 +54,7 @@ app.get('/process', async (req, res) => {
 
   try {
     const companies = await Company.find(query);
-    console.log("Query Results:", companies); // Log query results
+    console.log("Query Results:", companies);
 
     res.writeHead(200, { 'Content-Type': 'text/html' });
     res.write("<h1>Search Results:</h1>");
