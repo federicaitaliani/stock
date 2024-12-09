@@ -37,12 +37,11 @@
 </head>
 <body>
   <h1>Search Results</h1>
-  <p id="loading">Loading results...</p>
   <div id="results"></div>
   <a href="/">Back to Home</a>
 
   <script>
-    // Fetch and render results
+    // Fetch results
     fetch(window.location.href)
       .then(response => {
         if (!response.ok) {
@@ -52,8 +51,6 @@
       })
       .then(data => {
         const resultsDiv = document.getElementById('results');
-        const loadingMessage = document.getElementById('loading');
-        loadingMessage.style.display = 'none'; // Hide loading message
 
         if (data.companies.length > 0) {
           const list = document.createElement('ul');
@@ -74,7 +71,6 @@
       .catch(error => {
         console.error("Error fetching results:", error);
         const loadingMessage = document.getElementById('loading');
-        loadingMessage.style.display = 'none'; // Hide loading message
         document.getElementById('results').innerHTML = '<p>An error occurred while fetching results.</p>';
       });
   </script>
